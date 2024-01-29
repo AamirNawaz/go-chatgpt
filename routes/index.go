@@ -13,16 +13,18 @@ func RoutesSetup(router *gin.Engine) {
 	{
 		auth.POST("/signup", controllers.Signup)
 		auth.POST("/login", controllers.Login)
+
 		// auth.POST("/get-token", controllers.GetNewAccessToken)
 		// auth.GET("/logout", controllers.Logout)
 	}
 
 	//User Routes
-	// user := router.Group("/api/users")
-	// {
-	// 	user.GET("/", controllers.GetUsers)
-	// 	user.DELETE("/delete/:id", middleware.CheckAuth, middleware.CheckRole, controllers.DeleteUser)
-	// }
+	user := router.Group("/api/users")
+	{
+		user.GET("/", controllers.GetUsers)
+		user.GET("/profile", controllers.GetUserProfile)
+		// user.DELETE("/delete/:id", middleware.CheckAuth, middleware.CheckRole, controllers.DeleteUser)
+	}
 
 	//Api Routes
 	// appApi := router.Group("/api/search")
