@@ -1,15 +1,24 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"go-chatgpt-app/config"
+	"go-chatgpt-app/routes"
+
+	"github.com/gin-gonic/gin"
+	cors "github.com/rs/cors/wrapper/gin"
+)
 
 func main() {
-	r := gin.Default()
-	r.GET("/ping", ABc)
-	r.Run() // listen and serve on 0.0.0.0:8080
-}
+	app := gin.Default()
+	//Database connection
+	config.Connect()
 
-func ABc(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "pong",
-	})
+	//handling cors
+	app.Use(cors.Default())
+
+	//routes
+	routes.RoutesSetup(app)
+
+	app.Run("localhost:9080")
+
 }
