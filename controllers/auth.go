@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	Database "go-chatgpt-app/config"
+	dto "go-chatgpt-app/dto"
 	"go-chatgpt-app/models"
 	"net/http"
 	"os"
@@ -78,21 +79,20 @@ func Login(c *gin.Context) {
 }
 
 func Signup(c *gin.Context) {
-	var userInput models.User
+	var userInput dto.UserInputDto
+	if err := c.ShouldBindJSON(&userInput); err != nil {
+		c.JSON(400, gin.H{
+			"success": false,
+			"message": err.Error(),
+		})
+		return
+	}
 
 	validation.Errors{
 		"name":     validation.Validate(userInput.Name, validation.Required),
 		"email":    validation.Validate(userInput.Email, validation.Required, is.Email),
 		"password": validation.Validate(userInput.Password, validation.Required),
 	}.Filter()
-
-	if err := c.ShouldBindJSON(&userInput); err != nil {
-		c.JSON(400, gin.H{
-			"success": false,
-			"message": "Invalid JSON format",
-		})
-		return
-	}
 
 	// Validate the parsed fields
 	validate := validator.New()
@@ -109,25 +109,37 @@ func Signup(c *gin.Context) {
 	if err != nil {
 		c.JSON(500, gin.H{
 			"success": false,
-			"message": "Failed to hash password",
+			"message": err.Error(),
 		})
 		return
 	}
-	userInput.Password = []byte(hashedPassword)
-	userInput.Status = "active"
+
+	user := models.User{
+		Name:     userInput.Name,
+		Email:    userInput.Email,
+		Password: hashedPassword,
+		Status:   "active",
+	}
 
 	// Insert the user into the database
-	if err := Database.DB.Create(&userInput).Error; err != nil {
+	if err := Database.DB.Create(&user).Error; err != nil {
 		c.JSON(500, gin.H{
 			"success": false,
-			"message": "Failed to create user",
+			"message": err.Error(),
 		})
 		return
 	}
 
+	//creating user response which will not send password to api response
+	userResponse := dto.SignupUserResponse{
+		ID:     user.Id,
+		Name:   user.Name,
+		Email:  user.Email,
+		Status: user.Status,
+	}
 	c.JSON(200, gin.H{
 		"success": true,
 		"message": "User created successfully",
-		"Data":    userInput,
+		"Data":    userResponse,
 	})
 }

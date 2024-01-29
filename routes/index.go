@@ -23,7 +23,7 @@ func RoutesSetup(router *gin.Engine) {
 	user := router.Group("/api/users")
 	{
 		user.GET("/", middleware.CheckAuth, controllers.GetUsers)
-		user.GET("/profile", controllers.GetUserProfile)
+		user.GET("/profile", middleware.CheckAuth, controllers.GetUserProfile)
 		// user.DELETE("/delete/:id", middleware.CheckAuth, middleware.CheckRole, controllers.DeleteUser)
 	}
 
