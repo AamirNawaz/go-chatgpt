@@ -2,6 +2,7 @@ package routes
 
 import (
 	"go-chatgpt-app/controllers"
+	"go-chatgpt-app/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,7 +22,7 @@ func RoutesSetup(router *gin.Engine) {
 	//User Routes
 	user := router.Group("/api/users")
 	{
-		user.GET("/", controllers.GetUsers)
+		user.GET("/", middleware.CheckAuth, controllers.GetUsers)
 		user.GET("/profile", controllers.GetUserProfile)
 		// user.DELETE("/delete/:id", middleware.CheckAuth, middleware.CheckRole, controllers.DeleteUser)
 	}

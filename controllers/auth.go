@@ -83,7 +83,7 @@ func Signup(c *gin.Context) {
 	validation.Errors{
 		"name":     validation.Validate(userInput.Name, validation.Required),
 		"email":    validation.Validate(userInput.Email, validation.Required, is.Email),
-		"password": validation.Validate(userInput.Password, validation.Required, validation.Length(4, 12)),
+		"password": validation.Validate(userInput.Password, validation.Required),
 	}.Filter()
 
 	if err := c.ShouldBindJSON(&userInput); err != nil {
