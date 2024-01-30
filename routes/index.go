@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"go-chatgpt-app/ApiClient"
 	"go-chatgpt-app/controllers"
 	"go-chatgpt-app/middleware"
 
@@ -28,11 +29,10 @@ func RoutesSetup(router *gin.Engine) {
 	}
 
 	//Api Routes
-	// appApi := router.Group("/api/search")
-	// {
-	// 	appApi.POST("/search", controllers.PromptSearch)
-	// 	appApi.GET("/search-response", controllers.PromptResponse)
-	// 	appApi.DELETE("/delete-prompt/:id", controllers.PromptResponse)
-	// }
+	appApi := router.Group("/api/search")
+	{
+		appApi.GET("/prompt-search", ApiClient.HttpApiRequest)
+		//appApi.GET("/search-response", controllers.PromptResponse)
+	}
 
 }
